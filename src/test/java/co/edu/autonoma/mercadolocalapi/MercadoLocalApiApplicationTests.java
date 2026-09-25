@@ -1,0 +1,13 @@
+package co.edu.autonoma.mercadolocalapi;
+
+import org.junit.jupiter.api.Test;
+import org.springframework.boot.test.context.SpringBootTest;
+
+@SpringBootTest
+class MercadoLocalApiApplicationTests {
+
+	@Test
+	void contextLoads() {
+	}
+
+}
