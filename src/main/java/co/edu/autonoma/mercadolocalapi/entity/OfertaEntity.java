@@ -1,5 +1,6 @@
-package co.edu.autonoma.mercadolocalapi.domain;
+package co.edu.autonoma.mercadolocalapi.entity;
 
+import co.edu.autonoma.mercadolocalapi.domain.EstadoOferta;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
