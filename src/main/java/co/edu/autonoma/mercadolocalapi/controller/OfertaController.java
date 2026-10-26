@@ -1,6 +1,6 @@
 package co.edu.autonoma.mercadolocalapi.controller;
 
-import co.edu.autonoma.mercadolocalapi.dto.OfertaResponse;
+import co.edu.autonoma.mercadolocalapi.dto.response.OfertaResponse;
 import co.edu.autonoma.mercadolocalapi.service.OfertaService;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
