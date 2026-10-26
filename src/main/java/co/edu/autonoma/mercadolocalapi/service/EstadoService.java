@@ -1,7 +1,8 @@
 package co.edu.autonoma.mercadolocalapi.service;
 
 import org.springframework.stereotype.Service;
-import co.edu.autonoma.mercadolocalapi.dto.EstadoResponse;
+
+import co.edu.autonoma.mercadolocalapi.dto.response.EstadoResponse;
 
 @Service
 public class EstadoService {

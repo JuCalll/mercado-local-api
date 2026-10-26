@@ -3,7 +3,8 @@ package co.edu.autonoma.mercadolocalapi.controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import co.edu.autonoma.mercadolocalapi.dto.EstadoResponse;
+
+import co.edu.autonoma.mercadolocalapi.dto.response.EstadoResponse;
 import co.edu.autonoma.mercadolocalapi.service.EstadoService;
 
 @RestController
