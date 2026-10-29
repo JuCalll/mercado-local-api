@@ -4,7 +4,7 @@ Catálogo de todas las peticiones del aplicativo, con la estructura exacta de ca
 
 **Fuentes:** enunciado del proyecto (usuarios, reglas RN-01 a RN-06 y contrato HTTP mínimo), modelo de datos `database/01_esquema.sql` y clases de la asignatura (verbos HTTP, códigos de estado, DTO).
 
-**Estado de implementación al 25 de octubre:** 2 de 20 en `develop` (E01 y E02) · 18 pendientes. Todos los DTO del contrato existen en el paquete `dto` desde la rama `feature/iteracion-get`.
+**Estado de implementación al 29 de octubre:** 3 de 20 (E01, E02 y E03) · 17 pendientes. Todos los DTO del contrato existen en el paquete `dto` desde la rama `feature/iteracion-get`.
 
 ---
 
@@ -85,7 +85,7 @@ El enunciado exige no exponer el contacto antes de confirmar el pedido. Por eso 
 |---|---|---|---|---|---|
 | E01 | GET | `/api/estado` | Estado del servicio | Guía de inicio | Hecho |
 | E02 | GET | `/api/ofertas` | Lista las ofertas vigentes | **Enunciado** | GET · Hecho |
-| E03 | GET | `/api/ofertas/{id}` | Consulta una oferta | **Docente** | GET |
+| E03 | GET | `/api/ofertas/{id}` | Consulta una oferta | **Docente** | GET · Hecho |
 | E04 | POST | `/api/ofertas` | Publica una oferta | Necesario | POST |
 | E05 | PUT | `/api/ofertas/{id}` | Reemplaza una oferta antes de recibir pedidos | **Enunciado** | PUT/PATCH |
 | E06 | PATCH | `/api/ofertas/{id}/estado` | Activa o cierra una oferta | **Enunciado** | PUT/PATCH |
@@ -171,6 +171,8 @@ Devuelve la oferta en cualquier estado, también si está cerrada o vencida. El 
 | `200` | La oferta existe |
 | `400` | El id no es un número: `/api/ofertas/abc` |
 | `404` | No existe una oferta con ese id |
+
+**Implementación actual:** el `404` responde sin cuerpo, con `ResponseEntity.notFound()`. El cuerpo con `ErrorResponse` llegará cuando se construya el manejo global de errores en el paquete `exception`.
 
 ### E04 · Publicar una oferta
 
