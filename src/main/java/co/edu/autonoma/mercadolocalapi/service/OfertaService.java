@@ -1,7 +1,7 @@
 package co.edu.autonoma.mercadolocalapi.service;
 
 import co.edu.autonoma.mercadolocalapi.domain.EstadoOferta;
-import co.edu.autonoma.mercadolocalapi.dto.OfertaResponse;
+import co.edu.autonoma.mercadolocalapi.dto.response.OfertaResponse;
 import co.edu.autonoma.mercadolocalapi.entity.OfertaEntity;
 import co.edu.autonoma.mercadolocalapi.repository.OfertaRepository;
 import org.springframework.stereotype.Service;
@@ -32,7 +32,9 @@ public class OfertaService {
                 oferta.getProducto(),
                 oferta.getPrecioUnitario(),
                 oferta.getStock(),
-                oferta.getVigenteHasta()
+                oferta.getVigenteHasta(),
+                oferta.getEstado()
         );
     }
+    
 }

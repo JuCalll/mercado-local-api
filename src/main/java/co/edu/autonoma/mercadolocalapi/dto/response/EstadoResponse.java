@@ -1,4 +1,4 @@
-package co.edu.autonoma.mercadolocalapi.dto;
+package co.edu.autonoma.mercadolocalapi.dto.response;
 
 public record EstadoResponse(
         String servicio,
