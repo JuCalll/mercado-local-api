@@ -2,7 +2,6 @@ package co.edu.autonoma.mercadolocalapi.service;
 
 import co.edu.autonoma.mercadolocalapi.domain.EstadoOferta;
 import co.edu.autonoma.mercadolocalapi.dto.response.OfertaResponse;
-import co.edu.autonoma.mercadolocalapi.entity.OfertaEntity;
 import co.edu.autonoma.mercadolocalapi.repository.OfertaRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -20,18 +19,7 @@ public class OfertaService {
         return repository
                 .findByEstadoAndVigenteHastaGreaterThanEqual(EstadoOferta.ACTIVA, LocalDate.now())
                 .stream()
-                .map(this::aResponse)
+                .map(OfertaResponse::desde)
                 .toList();
-    }
-
-    private OfertaResponse aResponse(OfertaEntity oferta) {
-        return new OfertaResponse(
-                oferta.getId(),
-                oferta.getProducto(),
-                oferta.getPrecioUnitario(),
-                oferta.getStock(),
-                oferta.getVigenteHasta(),
-                oferta.getEstado()
-        );
     }
 }
