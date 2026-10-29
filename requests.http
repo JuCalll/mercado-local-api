@@ -1,3 +1,19 @@
 ### Consultar el estado del servicio
 GET http://localhost:8080/api/estado
 Accept: application/json
+
+### Listar las ofertas vigentes
+GET http://localhost:8080/api/ofertas
+Accept: application/json
+
+### Consultar una oferta que existe: 200
+GET http://localhost:8080/api/ofertas/1
+Accept: application/json
+
+### Consultar una oferta que no existe: 404
+GET http://localhost:8080/api/ofertas/999
+Accept: application/json
+
+### El id no es un número: 400
+GET http://localhost:8080/api/ofertas/abc
+Accept: application/json

@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -21,5 +22,10 @@ public class OfertaService {
                 .stream()
                 .map(OfertaResponse::desde)
                 .toList();
+    }
+
+    public Optional<OfertaResponse> buscar(Long id) {
+        return repository.findById(id)
+                .map(OfertaResponse::desde);
     }
 }
