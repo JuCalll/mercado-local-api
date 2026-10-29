@@ -54,7 +54,7 @@ Contrato completo, con la estructura de cada request y respuesta: [`docs/contrat
 |---|---|---|---|---|---|---|---|
 | E01 | GET | `/api/estado` | Estado del servicio | — | `EstadoResponse` | 200 | Implementado |
 | E02 | GET | `/api/ofertas` | Lista las ofertas vigentes | — | `List<OfertaResponse>` | 200 | Implementado |
-| E03 | GET | `/api/ofertas/{id}` | Consulta una oferta | — | `OfertaResponse` | 200 · 400 · 404 | Pendiente |
+| E03 | GET | `/api/ofertas/{id}` | Consulta una oferta | — | `OfertaResponse` | 200 · 400 · 404 | Implementado |
 | E04 | POST | `/api/ofertas` | Publica una oferta | `CrearOfertaRequest` | `OfertaResponse` | 201 · 400 · 404 · 409 | Pendiente |
 | E05 | PUT | `/api/ofertas/{id}` | Reemplaza una oferta antes de recibir pedidos | `ReemplazarOfertaRequest` | `OfertaResponse` | 200 · 400 · 404 · 409 | Pendiente |
 | E06 | PATCH | `/api/ofertas/{id}/estado` | Activa o cierra una oferta | `CambiarEstadoOfertaRequest` | `OfertaResponse` | 200 · 400 · 404 · 409 | Pendiente |
