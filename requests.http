@@ -1,19 +1,148 @@
-### Consultar el estado del servicio
-GET http://localhost:8080/api/estado
+@base = http://localhost:8080
+@productorId = 1
+@otroProductorId = 2
+@ofertaId = 2
+@ofertaVencidaId = 3
+@ofertaNuevaId = 4
+
+### E01 · Estado del servicio → 200
+GET {{base}}/api/estado
 Accept: application/json
 
-### Listar las ofertas vigentes
-GET http://localhost:8080/api/ofertas
+### E02 · Ofertas vigentes → 200
+GET {{base}}/api/ofertas
 Accept: application/json
 
-### Consultar una oferta que existe: 200
-GET http://localhost:8080/api/ofertas/1
+### E03 · Una oferta → 200
+GET {{base}}/api/ofertas/{{ofertaId}}
 Accept: application/json
 
-### Consultar una oferta que no existe: 404
-GET http://localhost:8080/api/ofertas/999
+### E03 · Oferta que no existe → 404 con ErrorResponse
+GET {{base}}/api/ofertas/999
 Accept: application/json
 
-### El id no es un número: 400
-GET http://localhost:8080/api/ofertas/abc
+### E03 · El id no es un número → 400
+GET {{base}}/api/ofertas/abc
 Accept: application/json
+
+### E08 · Lista de productores → 200
+GET {{base}}/api/productores
+Accept: application/json
+
+### E09 · Un productor → 200
+GET {{base}}/api/productores/{{productorId}}
+Accept: application/json
+
+### E10 · Registrar un productor → 201 (la segunda vez → 409, correo repetido)
+POST {{base}}/api/productores
+Content-Type: application/json
+
+{
+  "nombre": "Trapiche El Roble",
+  "correo": "roble@correo.com",
+  "telefono": "3007654321",
+  "municipio": "Chinchiná"
+}
+
+### E10 · Datos inválidos → 400 con detalles
+POST {{base}}/api/productores
+Content-Type: application/json
+
+{
+  "nombre": "",
+  "correo": "esto-no-es-un-correo",
+  "telefono": "3000000000",
+  "municipio": "Manizales"
+}
+
+### E11 · Desactivar un productor → 200
+PATCH {{base}}/api/productores/{{productorId}}/estado
+Content-Type: application/json
+
+{
+  "activo": false
+}
+
+### E11 · Activarlo de nuevo → 200
+PATCH {{base}}/api/productores/{{productorId}}/estado
+Content-Type: application/json
+
+{
+  "activo": true
+}
+
+### E12 · Ofertas de un productor, en cualquier estado → 200
+GET {{base}}/api/productores/{{productorId}}/ofertas
+Accept: application/json
+
+### E04 · Publicar una oferta del segundo productor → 201 (si está inactivo → 409)
+POST {{base}}/api/ofertas
+Content-Type: application/json
+
+{
+  "productorId": {{otroProductorId}},
+  "producto": "Aguacate hass",
+  "precioUnitario": 2500.00,
+  "stock": 30,
+  "vigenteHasta": "2026-12-31"
+}
+
+### E04 · Precio negativo y fecha pasada → 400 con detalles
+POST {{base}}/api/ofertas
+Content-Type: application/json
+
+{
+  "productorId": {{productorId}},
+  "producto": "Aguacate hass",
+  "precioUnitario": -1,
+  "stock": 30,
+  "vigenteHasta": "2020-01-01"
+}
+
+### E04 · Productor que no existe → 404
+POST {{base}}/api/ofertas
+Content-Type: application/json
+
+{
+  "productorId": 999,
+  "producto": "Aguacate hass",
+  "precioUnitario": 2500.00,
+  "stock": 30,
+  "vigenteHasta": "2026-12-31"
+}
+
+### E07 · Historial de stock de una oferta → 200
+GET {{base}}/api/ofertas/{{ofertaId}}/movimientos
+Accept: application/json
+
+### E06 · Cerrar una oferta → 200
+PATCH {{base}}/api/ofertas/{{ofertaId}}/estado
+Content-Type: application/json
+
+{
+  "estado": "CERRADA"
+}
+
+### E06 · Activarla de nuevo → 200
+PATCH {{base}}/api/ofertas/{{ofertaId}}/estado
+Content-Type: application/json
+
+{
+  "estado": "ACTIVA"
+}
+
+### E06 · Activar una oferta vencida → 409
+PATCH {{base}}/api/ofertas/{{ofertaVencidaId}}/estado
+Content-Type: application/json
+
+{
+  "estado": "ACTIVA"
+}
+
+### E06 · Estado que no existe → 400
+PATCH {{base}}/api/ofertas/{{ofertaId}}/estado
+Content-Type: application/json
+
+{
+  "estado": "activa"
+}
