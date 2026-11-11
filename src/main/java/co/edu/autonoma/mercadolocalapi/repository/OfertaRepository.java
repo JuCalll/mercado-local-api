@@ -10,4 +10,6 @@ import java.util.List;
 public interface OfertaRepository extends JpaRepository<OfertaEntity, Long> {
 
     List<OfertaEntity> findByEstadoAndVigenteHastaGreaterThanEqual(EstadoOferta estado, LocalDate fecha);
+
+    List<OfertaEntity> findByProductorIdOrderByIdAsc(Long productorId);
 };

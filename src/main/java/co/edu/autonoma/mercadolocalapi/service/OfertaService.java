@@ -7,6 +7,7 @@ import co.edu.autonoma.mercadolocalapi.exception.RecursoNoEncontradoException;
 import co.edu.autonoma.mercadolocalapi.repository.OfertaRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import co.edu.autonoma.mercadolocalapi.repository.ProductorRepository;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -16,6 +17,7 @@ import java.util.List;
 public class OfertaService {
 
     private final OfertaRepository repository;
+    private final ProductorRepository productorRepository;
 
     public List<OfertaResponse> listarVigentes() {
         return repository
@@ -27,6 +29,15 @@ public class OfertaService {
 
     public OfertaResponse buscar(Long id) {
         return OfertaResponse.desde(obtener(id));
+    }
+
+    public List<OfertaResponse> listarPorProductor(Long productorId) {
+        if (!productorRepository.existsById(productorId)) {
+            throw new RecursoNoEncontradoException("No existe el productor " + productorId);
+        }
+        return repository.findByProductorIdOrderByIdAsc(productorId).stream()
+                .map(OfertaResponse::desde)
+                .toList();
     }
 
     private OfertaEntity obtener(Long id) {
