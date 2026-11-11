@@ -15,6 +15,7 @@ import jakarta.persistence.ManyToOne;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import co.edu.autonoma.mercadolocalapi.exception.ReglaNegocioException;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -57,5 +58,12 @@ public class OfertaEntity {
         this.stock = stock;
         this.vigenteHasta = vigenteHasta;
         this.estado = EstadoOferta.ACTIVA;
+    }
+
+    public void cambiarEstado(EstadoOferta nuevoEstado, LocalDate hoy) {
+        if (nuevoEstado == EstadoOferta.ACTIVA && vigenteHasta.isBefore(hoy)) {
+            throw new ReglaNegocioException("La oferta " + id + " está vencida y no se puede activar");
+        }
+        this.estado = nuevoEstado;
     }
 }

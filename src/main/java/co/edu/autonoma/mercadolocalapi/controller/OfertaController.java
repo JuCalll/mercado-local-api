@@ -15,6 +15,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import java.net.URI;
 import java.util.List;
+import co.edu.autonoma.mercadolocalapi.dto.request.CambiarEstadoOfertaRequest;
+import org.springframework.web.bind.annotation.PatchMapping;
 
 @RestController
 @RequestMapping("/api/ofertas")
@@ -42,5 +44,11 @@ public class OfertaController {
     public ResponseEntity<OfertaResponse> publicar(@Valid @RequestBody CrearOfertaRequest request) {
         OfertaResponse creada = service.publicar(request);
         return ResponseEntity.created(URI.create("/api/ofertas/" + creada.id())).body(creada);
+    }
+
+    @PatchMapping("/{id}/estado")
+    public OfertaResponse cambiarEstado(@PathVariable Long id,
+            @Valid @RequestBody CambiarEstadoOfertaRequest request) {
+        return service.cambiarEstado(id, request);
     }
 }

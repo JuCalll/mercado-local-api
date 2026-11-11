@@ -17,6 +17,7 @@ import co.edu.autonoma.mercadolocalapi.entity.MovimientoStockEntity;
 import co.edu.autonoma.mercadolocalapi.entity.ProductorEntity;
 import co.edu.autonoma.mercadolocalapi.exception.ReglaNegocioException;
 import org.springframework.transaction.annotation.Transactional;
+import co.edu.autonoma.mercadolocalapi.dto.request.CambiarEstadoOfertaRequest;
 
 @Service
 @RequiredArgsConstructor
@@ -68,6 +69,13 @@ public class OfertaService {
         OfertaEntity guardada = repository.save(oferta);
         movimientoRepository.save(MovimientoStockEntity.publicacion(guardada));
         return OfertaResponse.desde(guardada);
+    }
+
+    @Transactional
+    public OfertaResponse cambiarEstado(Long id, CambiarEstadoOfertaRequest request) {
+        OfertaEntity oferta = obtener(id);
+        oferta.cambiarEstado(request.estado(), LocalDate.now());
+        return OfertaResponse.desde(oferta);
     }
 
     private OfertaEntity obtener(Long id) {
