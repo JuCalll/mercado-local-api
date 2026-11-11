@@ -6,4 +6,5 @@ import java.util.List;
 
 public interface ProductorRepository extends JpaRepository<ProductorEntity, Long> {
     List<ProductorEntity> findAllByOrderByIdAsc();
+    boolean existsByCorreo(String correo);
 }
