@@ -9,6 +9,9 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -26,6 +29,10 @@ public class OfertaEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "productor_id", nullable = false)
+    private ProductorEntity productor;
+
     @Column(nullable = false, length = 120)
     private String producto;
 
@@ -42,8 +49,9 @@ public class OfertaEntity {
     @Column(nullable = false, length = 20)
     private EstadoOferta estado;
 
-    public OfertaEntity(String producto, BigDecimal precioUnitario,
-                        Integer stock, LocalDate vigenteHasta) {
+    public OfertaEntity(ProductorEntity productor, String producto, BigDecimal precioUnitario,
+            Integer stock, LocalDate vigenteHasta) {
+        this.productor = productor;
         this.producto = producto;
         this.precioUnitario = precioUnitario;
         this.stock = stock;
