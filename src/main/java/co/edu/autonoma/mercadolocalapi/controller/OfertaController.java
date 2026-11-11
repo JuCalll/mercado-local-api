@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import co.edu.autonoma.mercadolocalapi.dto.response.MovimientoStockResponse;
 
 import java.util.List;
 
@@ -25,5 +26,10 @@ public class OfertaController {
     @GetMapping("/{id}")
     public OfertaResponse buscar(@PathVariable Long id) {
         return service.buscar(id);
+    }
+
+    @GetMapping("/{id}/movimientos")
+    public List<MovimientoStockResponse> movimientos(@PathVariable Long id) {
+        return service.listarMovimientos(id);
     }
 }

@@ -8,7 +8,8 @@ import co.edu.autonoma.mercadolocalapi.repository.OfertaRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import co.edu.autonoma.mercadolocalapi.repository.ProductorRepository;
-
+import co.edu.autonoma.mercadolocalapi.dto.response.MovimientoStockResponse;
+import co.edu.autonoma.mercadolocalapi.repository.MovimientoStockRepository;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -18,6 +19,7 @@ public class OfertaService {
 
     private final OfertaRepository repository;
     private final ProductorRepository productorRepository;
+    private final MovimientoStockRepository movimientoRepository;
 
     public List<OfertaResponse> listarVigentes() {
         return repository
@@ -37,6 +39,13 @@ public class OfertaService {
         }
         return repository.findByProductorIdOrderByIdAsc(productorId).stream()
                 .map(OfertaResponse::desde)
+                .toList();
+    }
+
+    public List<MovimientoStockResponse> listarMovimientos(Long id) {
+        obtener(id);
+        return movimientoRepository.findByOfertaIdOrderByIdAsc(id).stream()
+                .map(MovimientoStockResponse::desde)
                 .toList();
     }
 
