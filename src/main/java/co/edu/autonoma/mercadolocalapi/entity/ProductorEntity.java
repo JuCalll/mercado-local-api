@@ -1,5 +1,7 @@
 package co.edu.autonoma.mercadolocalapi.entity;
 
+import co.edu.autonoma.mercadolocalapi.dto.response.ProductorResponse;
+import co.edu.autonoma.mercadolocalapi.entity.ProductorEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -42,4 +44,13 @@ public class ProductorEntity {
         this.municipio = municipio;
         this.activo = true;
     }
+   
+    public static ProductorResponse desde(ProductorEntity productor) {
+        return new ProductorResponse(
+                productor.getId(),
+                productor.getNombre(),
+                productor.getMunicipio(),
+                productor.isActivo()
+        );
+    } 
 }
