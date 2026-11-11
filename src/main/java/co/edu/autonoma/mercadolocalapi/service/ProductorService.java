@@ -9,6 +9,7 @@ import co.edu.autonoma.mercadolocalapi.exception.ReglaNegocioException;
 import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import co.edu.autonoma.mercadolocalapi.dto.request.CambiarEstadoProductorRequest;
 
 import java.util.List;
 
@@ -36,6 +37,13 @@ public class ProductorService {
         ProductorEntity productor = new ProductorEntity(request.nombre(), request.correo(),
                 request.telefono(), request.municipio());
         return ProductorResponse.desde(repository.save(productor));
+    }
+    
+    @Transactional
+    public ProductorResponse cambiarEstado(Long id, CambiarEstadoProductorRequest request) {
+        ProductorEntity productor = obtener(id);
+        productor.cambiarActivo(request.activo());
+        return ProductorResponse.desde(productor);
     }
 
     private ProductorEntity obtener(Long id) {

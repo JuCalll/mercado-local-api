@@ -13,6 +13,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import java.net.URI;
+import co.edu.autonoma.mercadolocalapi.dto.request.CambiarEstadoProductorRequest;
+import org.springframework.web.bind.annotation.PatchMapping;
 
 import java.util.List;
 
@@ -32,10 +34,16 @@ public class ProductorController {
     public ProductorResponse buscar(@PathVariable Long id) {
         return service.buscar(id);
     }
-    
+
     @PostMapping
     public ResponseEntity<ProductorResponse> registrar(@Valid @RequestBody CrearProductorRequest request) {
         ProductorResponse creado = service.registrar(request);
         return ResponseEntity.created(URI.create("/api/productores/" + creado.id())).body(creado);
+    }
+    
+    @PatchMapping("/{id}/estado")
+    public ProductorResponse cambiarEstado(@PathVariable Long id,
+                                           @Valid @RequestBody CambiarEstadoProductorRequest request) {
+        return service.cambiarEstado(id, request);
     }
 }

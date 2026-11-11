@@ -53,4 +53,8 @@ public class ProductorEntity {
                 productor.isActivo()
         );
     } 
+    
+    public void cambiarActivo(boolean activo) {
+        this.activo = activo;
+    }
 }
