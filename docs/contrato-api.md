@@ -4,7 +4,7 @@ Catálogo de todas las peticiones del aplicativo, con la estructura exacta de ca
 
 **Fuentes:** enunciado del proyecto (usuarios, reglas RN-01 a RN-06 y contrato HTTP mínimo), modelo de datos `database/01_esquema.sql` y clases de la asignatura (verbos HTTP, códigos de estado, DTO).
 
-**Estado de implementación al 29 de octubre:** 3 de 20 (E01, E02 y E03) · 17 pendientes. Todos los DTO del contrato existen en el paquete `dto` desde la rama `feature/iteracion-get`.
+**Estado de implementación:** 11 de 20 (E01 a E04 y E06 a E12) · 9 pendientes. Todos los DTO del contrato existen en el paquete `dto` desde la rama `feature/iteracion-get`.
 
 ---
 
@@ -86,15 +86,15 @@ El enunciado exige no exponer el contacto antes de confirmar el pedido. Por eso 
 | E01 | GET | `/api/estado` | Estado del servicio | Guía de inicio | Hecho |
 | E02 | GET | `/api/ofertas` | Lista las ofertas vigentes | **Enunciado** | GET · Hecho |
 | E03 | GET | `/api/ofertas/{id}` | Consulta una oferta | **Docente** | GET · Hecho |
-| E04 | POST | `/api/ofertas` | Publica una oferta | Necesario | POST |
+| E04 | POST | `/api/ofertas` | Publica una oferta | Necesario | POST · Hecho |
 | E05 | PUT | `/api/ofertas/{id}` | Reemplaza una oferta antes de recibir pedidos | **Enunciado** | PUT/PATCH |
-| E06 | PATCH | `/api/ofertas/{id}/estado` | Activa o cierra una oferta | **Enunciado** | PUT/PATCH |
-| E07 | GET | `/api/ofertas/{id}/movimientos` | Historial de stock de una oferta | Complementario | GET |
-| E08 | GET | `/api/productores` | Lista los productores | Complementario | GET |
-| E09 | GET | `/api/productores/{id}` | Consulta un productor | Necesario | GET |
-| E10 | POST | `/api/productores` | Registra un productor | Necesario | POST |
-| E11 | PATCH | `/api/productores/{id}/estado` | Activa o desactiva un productor | Complementario | PUT/PATCH |
-| E12 | GET | `/api/productores/{id}/ofertas` | Ofertas de un productor, en cualquier estado | Complementario | GET |
+| E06 | PATCH | `/api/ofertas/{id}/estado` | Activa o cierra una oferta | **Enunciado** | PUT/PATCH · Hecho |
+| E07 | GET | `/api/ofertas/{id}/movimientos` | Historial de stock de una oferta | Complementario | GET · Hecho |
+| E08 | GET | `/api/productores` | Lista los productores | Complementario | GET · Hecho |
+| E09 | GET | `/api/productores/{id}` | Consulta un productor | Necesario | GET · Hecho |
+| E10 | POST | `/api/productores` | Registra un productor | Necesario | POST · Hecho |
+| E11 | PATCH | `/api/productores/{id}/estado` | Activa o desactiva un productor | Complementario | PUT/PATCH · Hecho |
+| E12 | GET | `/api/productores/{id}/ofertas` | Ofertas de un productor, en cualquier estado | Complementario | GET · Hecho |
 | E13 | GET | `/api/productores/{id}/pedidos` | Vista del productor: pedidos con sus ofertas | **Enunciado** | GET |
 | E14 | POST | `/api/compradores` | Registra un comprador | Necesario | POST |
 | E15 | GET | `/api/compradores/{id}` | Consulta un comprador | Necesario | GET |
@@ -172,7 +172,7 @@ Devuelve la oferta en cualquier estado, también si está cerrada o vencida. El 
 | `400` | El id no es un número: `/api/ofertas/abc` |
 | `404` | No existe una oferta con ese id |
 
-**Implementación actual:** el `404` responde sin cuerpo, con `ResponseEntity.notFound()`. El cuerpo con `ErrorResponse` llegará cuando se construya el manejo global de errores en el paquete `exception`.
+**Implementación:** el `404` y el `400` responden con `ErrorResponse`, gracias al manejo global de errores del paquete `exception` (`ManejadorErrores`).
 
 ### E04 · Publicar una oferta
 

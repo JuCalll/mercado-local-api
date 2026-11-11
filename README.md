@@ -55,15 +55,15 @@ Contrato completo, con la estructura de cada request y respuesta: [`docs/contrat
 | E01 | GET | `/api/estado` | Estado del servicio | — | `EstadoResponse` | 200 | Implementado |
 | E02 | GET | `/api/ofertas` | Lista las ofertas vigentes | — | `List<OfertaResponse>` | 200 | Implementado |
 | E03 | GET | `/api/ofertas/{id}` | Consulta una oferta | — | `OfertaResponse` | 200 · 400 · 404 | Implementado |
-| E04 | POST | `/api/ofertas` | Publica una oferta | `CrearOfertaRequest` | `OfertaResponse` | 201 · 400 · 404 · 409 | Pendiente |
+| E04 | POST | `/api/ofertas` | Publica una oferta | `CrearOfertaRequest` | `OfertaResponse` | 201 · 400 · 404 · 409 | Implementado |
 | E05 | PUT | `/api/ofertas/{id}` | Reemplaza una oferta antes de recibir pedidos | `ReemplazarOfertaRequest` | `OfertaResponse` | 200 · 400 · 404 · 409 | Pendiente |
-| E06 | PATCH | `/api/ofertas/{id}/estado` | Activa o cierra una oferta | `CambiarEstadoOfertaRequest` | `OfertaResponse` | 200 · 400 · 404 · 409 | Pendiente |
-| E07 | GET | `/api/ofertas/{id}/movimientos` | Historial de stock de una oferta | — | `List<MovimientoStockResponse>` | 200 · 404 | Pendiente |
-| E08 | GET | `/api/productores` | Lista los productores | — | `List<ProductorResponse>` | 200 | Pendiente |
-| E09 | GET | `/api/productores/{id}` | Consulta un productor | — | `ProductorResponse` | 200 · 404 | Pendiente |
-| E10 | POST | `/api/productores` | Registra un productor | `CrearProductorRequest` | `ProductorResponse` | 201 · 400 · 409 | Pendiente |
-| E11 | PATCH | `/api/productores/{id}/estado` | Activa o desactiva un productor | `CambiarEstadoProductorRequest` | `ProductorResponse` | 200 · 400 · 404 | Pendiente |
-| E12 | GET | `/api/productores/{id}/ofertas` | Ofertas de un productor, en cualquier estado | — | `List<OfertaResponse>` | 200 · 404 | Pendiente |
+| E06 | PATCH | `/api/ofertas/{id}/estado` | Activa o cierra una oferta | `CambiarEstadoOfertaRequest` | `OfertaResponse` | 200 · 400 · 404 · 409 | Implementado |
+| E07 | GET | `/api/ofertas/{id}/movimientos` | Historial de stock de una oferta | — | `List<MovimientoStockResponse>` | 200 · 404 | Implementado |
+| E08 | GET | `/api/productores` | Lista los productores | — | `List<ProductorResponse>` | 200 | Implementado |
+| E09 | GET | `/api/productores/{id}` | Consulta un productor | — | `ProductorResponse` | 200 · 404 | Implementado |
+| E10 | POST | `/api/productores` | Registra un productor | `CrearProductorRequest` | `ProductorResponse` | 201 · 400 · 409 | Implementado |
+| E11 | PATCH | `/api/productores/{id}/estado` | Activa o desactiva un productor | `CambiarEstadoProductorRequest` | `ProductorResponse` | 200 · 400 · 404 | Implementado |
+| E12 | GET | `/api/productores/{id}/ofertas` | Ofertas de un productor, en cualquier estado | — | `List<OfertaResponse>` | 200 · 404 | Implementado |
 | E13 | GET | `/api/productores/{id}/pedidos` | Vista del productor: pedidos con sus ofertas | — | `List<PedidoProductorResponse>` | 200 · 404 | Pendiente |
 | E14 | POST | `/api/compradores` | Registra un comprador | `CrearCompradorRequest` | `CompradorResponse` | 201 · 400 · 409 | Pendiente |
 | E15 | GET | `/api/compradores/{id}` | Consulta un comprador | — | `CompradorResponse` | 200 · 404 | Pendiente |
