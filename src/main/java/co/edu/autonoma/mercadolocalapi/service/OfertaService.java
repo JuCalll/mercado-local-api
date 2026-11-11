@@ -12,6 +12,11 @@ import co.edu.autonoma.mercadolocalapi.dto.response.MovimientoStockResponse;
 import co.edu.autonoma.mercadolocalapi.repository.MovimientoStockRepository;
 import java.time.LocalDate;
 import java.util.List;
+import co.edu.autonoma.mercadolocalapi.dto.request.CrearOfertaRequest;
+import co.edu.autonoma.mercadolocalapi.entity.MovimientoStockEntity;
+import co.edu.autonoma.mercadolocalapi.entity.ProductorEntity;
+import co.edu.autonoma.mercadolocalapi.exception.ReglaNegocioException;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -47,6 +52,22 @@ public class OfertaService {
         return movimientoRepository.findByOfertaIdOrderByIdAsc(id).stream()
                 .map(MovimientoStockResponse::desde)
                 .toList();
+    }
+
+    @Transactional
+    public OfertaResponse publicar(CrearOfertaRequest request) {
+        ProductorEntity productor = productorRepository.findById(request.productorId())
+                .orElseThrow(() -> new RecursoNoEncontradoException(
+                        "No existe el productor " + request.productorId()));
+        if (!productor.isActivo()) {
+            throw new ReglaNegocioException(
+                    "El productor " + productor.getId() + " está inactivo y no puede publicar ofertas");
+        }
+        OfertaEntity oferta = new OfertaEntity(productor, request.producto(), request.precioUnitario(),
+                request.stock(), request.vigenteHasta());
+        OfertaEntity guardada = repository.save(oferta);
+        movimientoRepository.save(MovimientoStockEntity.publicacion(guardada));
+        return OfertaResponse.desde(guardada);
     }
 
     private OfertaEntity obtener(Long id) {
