@@ -17,6 +17,8 @@ import java.net.URI;
 import java.util.List;
 import co.edu.autonoma.mercadolocalapi.dto.request.CambiarEstadoOfertaRequest;
 import org.springframework.web.bind.annotation.PatchMapping;
+import co.edu.autonoma.mercadolocalapi.dto.request.ReemplazarOfertaRequest;
+import org.springframework.web.bind.annotation.PutMapping;
 
 @RestController
 @RequestMapping("/api/ofertas")
@@ -50,5 +52,10 @@ public class OfertaController {
     public OfertaResponse cambiarEstado(@PathVariable Long id,
             @Valid @RequestBody CambiarEstadoOfertaRequest request) {
         return service.cambiarEstado(id, request);
+    }
+
+    @PutMapping("/{id}")
+    public OfertaResponse reemplazar(@PathVariable Long id, @Valid @RequestBody ReemplazarOfertaRequest request) {
+        return service.reemplazar(id, request);
     }
 }

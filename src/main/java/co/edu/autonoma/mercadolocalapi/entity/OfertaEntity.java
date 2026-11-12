@@ -66,4 +66,33 @@ public class OfertaEntity {
         }
         this.estado = nuevoEstado;
     }
+
+    public boolean estaVigente(LocalDate hoy) {
+        return estado == EstadoOferta.ACTIVA && !vigenteHasta.isBefore(hoy);
+    }
+
+    public void descontar(int cantidad, LocalDate hoy){
+        if(!estaVigente(hoy)){
+            throw new ReglaNegocioException("La oferta " + id + " está cerrada o vencida");
+        }
+
+        if (cantidad > stock) {
+            throw new ReglaNegocioException("Stock insuficiente para la oferta " + id + ": disponible " + stock + ", solicitado " + cantidad);
+        }
+
+        this.stock = stock - cantidad;
+    }
+
+    public void devolver(int cantidad){
+        this.stock = stock + cantidad;
+    }
+
+    public int reemplazar(String producto, BigDecimal precioUnitario, int stock, LocalDate vigenteHasta){
+        int diferencia = stock - this.stock;
+        this.producto = producto;
+        this.precioUnitario = precioUnitario;
+        this.stock = stock;
+        this.vigenteHasta = vigenteHasta;
+        return diferencia;
+    }
 }
