@@ -1,5 +1,6 @@
 package co.edu.autonoma.mercadolocalapi.service;
 
+import co.edu.autonoma.mercadolocalapi.controller.ItemPedidoController;
 import co.edu.autonoma.mercadolocalapi.domain.EstadoOferta;
 import co.edu.autonoma.mercadolocalapi.dto.response.OfertaResponse;
 import co.edu.autonoma.mercadolocalapi.entity.OfertaEntity;
@@ -17,6 +18,8 @@ import co.edu.autonoma.mercadolocalapi.entity.MovimientoStockEntity;
 import co.edu.autonoma.mercadolocalapi.entity.ProductorEntity;
 import co.edu.autonoma.mercadolocalapi.exception.ReglaNegocioException;
 import org.springframework.transaction.annotation.Transactional;
+import co.edu.autonoma.mercadolocalapi.dto.request.ReemplazarOfertaRequest;
+import co.edu.autonoma.mercadolocalapi.repository.ItemPedidoRepository;
 import co.edu.autonoma.mercadolocalapi.dto.request.CambiarEstadoOfertaRequest;
 
 @Service
@@ -26,6 +29,7 @@ public class OfertaService {
     private final OfertaRepository repository;
     private final ProductorRepository productorRepository;
     private final MovimientoStockRepository movimientoRepository;
+    private final ItemPedidoRepository itemPedidoRepository;
 
     public List<OfertaResponse> listarVigentes() {
         return repository
@@ -78,6 +82,18 @@ public class OfertaService {
         return OfertaResponse.desde(oferta);
     }
 
+    @Transactional
+    public OfertaResponse reemplazar(Long id, ReemplazarOfertaRequest request){
+        OfertaEntity oferta = obtener(id);
+        if(itemPedidoRepository.existsByOfertaId(id)){
+            throw new ReglaNegocioException("La oferta " + id + " ya recibió pedidos y no se puede reemplazar");
+        }
+        int diferencia = oferta.reemplazar(request.producto(), request.precioUnitario(), request.stock(), request.vigenteHasta());
+        if(diferencia != 0){
+            movimientoRepository.save(MovimientoStockEntity.ajuste(oferta, diferencia));
+        }
+        return OfertaResponse.desde(oferta);
+    }
     private OfertaEntity obtener(Long id) {
         return repository.findById(id)
                 .orElseThrow(() -> new RecursoNoEncontradoException("No existe la oferta " + id));

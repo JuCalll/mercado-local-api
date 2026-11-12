@@ -86,4 +86,13 @@ public class OfertaEntity {
     public void devolver(int cantidad){
         this.stock = stock + cantidad;
     }
+
+    public int reemplazar(String producto, BigDecimal precioUnitario, int stock, LocalDate vigenteHasta){
+        int diferencia = stock - this.stock;
+        this.producto = producto;
+        this.precioUnitario = precioUnitario;
+        this.stock = stock;
+        this.vigenteHasta = vigenteHasta;
+        return diferencia;
+    }
 }
