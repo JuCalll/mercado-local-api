@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 
 import java.net.URI;
 
@@ -25,6 +27,11 @@ public class CompradorController {
     public ResponseEntity<CompradorResponse> registrar(@RequestBody @Valid CrearCompradorRequest request){
         CompradorResponse creado = service.registrar(request);
         return ResponseEntity.created(URI.create("/api/compradores/" + creado.id())).body(creado);
+    }
+
+    @GetMapping("/{id}")
+    public CompradorResponse buscar(@PathVariable Long id){
+        return service.buscar(id);
     }
     
 

@@ -8,6 +8,7 @@ import co.edu.autonoma.mercadolocalapi.repository.CompradorRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import co.edu.autonoma.mercadolocalapi.exception.RecursoNoEncontradoException;
 
 @Service 
 @RequiredArgsConstructor 
@@ -23,6 +24,12 @@ public class CompradorService {
         }
         CompradorEntity comprador = new CompradorEntity(request.nombre(), request.correo(), request.telefono());
         return CompradorResponse.desde(repository.save(comprador));
+    }
+
+    public CompradorResponse buscar(Long id){
+        CompradorEntity comprador = repository.findById(id)
+                .orElseThrow(() -> new RecursoNoEncontradoException("No se encontró el comprador con id: " + id));
+        return CompradorResponse.desde(comprador);
     }
 
 }
