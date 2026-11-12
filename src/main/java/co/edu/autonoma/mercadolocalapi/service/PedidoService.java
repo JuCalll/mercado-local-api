@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import co.edu.autonoma.mercadolocalapi.domain.EstadoPedido;
 import co.edu.autonoma.mercadolocalapi.dto.request.CambiarEstadoPedidoRequest;
+import co.edu.autonoma.mercadolocalapi.repository.ItemPedidoRepository;
 
 import java.time.LocalDate;
 import java.util.Comparator;
@@ -31,6 +32,7 @@ public class PedidoService {
     private final CompradorRepository compradorRepository;
     private final OfertaRepository ofertaRepository;
     private final MovimientoStockRepository movimientoRepository;
+    private final ItemPedidoRepository itemPedidoRepository;
 
     @Transactional
     public PedidoResponse crear(CrearPedidoRequest request) {
@@ -72,6 +74,14 @@ public class PedidoService {
             pedido.getItems().forEach(this::devolverStock);
         }
         return PedidoResponse.desde(pedido);
+    }
+
+    @Transactional
+    public void retirarItem(Long itemId){
+        ItemPedidoEntity item = itemPedidoRepository.findById(itemId)
+                .orElseThrow(() -> new RecursoNoEncontradoException("No existe el item " + itemId));
+        item.getPedido().retirarItem(item);
+        devolverStock(item);
     }
 
     private PedidoEntity obtener(Long id) {
