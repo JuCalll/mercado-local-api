@@ -19,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 import co.edu.autonoma.mercadolocalapi.domain.EstadoPedido;
 import co.edu.autonoma.mercadolocalapi.dto.request.CambiarEstadoPedidoRequest;
 import co.edu.autonoma.mercadolocalapi.repository.ItemPedidoRepository;
+import co.edu.autonoma.mercadolocalapi.dto.response.PedidoResumenResponse;
 
 import java.time.LocalDate;
 import java.util.Comparator;
@@ -82,6 +83,17 @@ public class PedidoService {
                 .orElseThrow(() -> new RecursoNoEncontradoException("No existe el item " + itemId));
         item.getPedido().retirarItem(item);
         devolverStock(item);
+    }
+
+    @Transactional(readOnly = true)
+    public List<PedidoResumenResponse> listarPorComprador(Long compradorId){
+        if(!compradorRepository.existsById(compradorId)){
+            throw new RecursoNoEncontradoException("No existe el comprador " + compradorId);
+        } else{
+            return repository.findByCompradorIdOrderByCreadoEnDesc(compradorId).stream()
+                    .map(PedidoResumenResponse::desde)
+                    .toList();
+        }
     }
 
     private PedidoEntity obtener(Long id) {

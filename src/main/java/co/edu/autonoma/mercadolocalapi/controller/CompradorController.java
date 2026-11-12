@@ -12,8 +12,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import co.edu.autonoma.mercadolocalapi.dto.response.PedidoResumenResponse;
+import co.edu.autonoma.mercadolocalapi.service.PedidoService;
+import java.util.List;
 
 import java.net.URI;
+import org.springframework.web.bind.annotation.RequestParam;
+
 
 @RestController
 @RequestMapping ("/api/compradores")
@@ -22,6 +27,7 @@ import java.net.URI;
 public class CompradorController {
 
     private final CompradorService service;
+    private final PedidoService pedidoService;
 
     @PostMapping
     public ResponseEntity<CompradorResponse> registrar(@RequestBody @Valid CrearCompradorRequest request){
@@ -33,6 +39,10 @@ public class CompradorController {
     public CompradorResponse buscar(@PathVariable Long id){
         return service.buscar(id);
     }
-    
 
+    @GetMapping("/{id}/pedidos")
+    public List<PedidoResumenResponse> pedidos(@PathVariable Long id){
+        return pedidoService.listarPorComprador(id);
+    }
+    
 }
