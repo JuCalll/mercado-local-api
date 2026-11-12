@@ -17,8 +17,12 @@ import co.edu.autonoma.mercadolocalapi.dto.response.OfertaResponse;
 import co.edu.autonoma.mercadolocalapi.service.OfertaService;
 import co.edu.autonoma.mercadolocalapi.dto.request.CambiarEstadoProductorRequest;
 import org.springframework.web.bind.annotation.PatchMapping;
+import co.edu.autonoma.mercadolocalapi.dto.response.PedidoProductorResponse;
+import co.edu.autonoma.mercadolocalapi.service.PedidoService;
 
 import java.util.List;
+import org.springframework.web.bind.annotation.RequestParam;
+
 
 @RestController
 @RequestMapping("/api/productores")
@@ -27,6 +31,7 @@ public class ProductorController {
 
     private final ProductorService service;
     private final OfertaService ofertaService;
+    private final PedidoService pedidoService;
 
     @GetMapping
     public List<ProductorResponse> listar() {
@@ -53,5 +58,10 @@ public class ProductorController {
     @GetMapping("/{id}/ofertas")
     public List<OfertaResponse> ofertas(@PathVariable Long id) {
         return ofertaService.listarPorProductor(id);
+    }
+
+    @GetMapping("/{id}/pedidos")
+    public List<PedidoProductorResponse> pedidos(@PathVariable Long id){
+        return pedidoService.listarPorProductor(id);
     }
 }

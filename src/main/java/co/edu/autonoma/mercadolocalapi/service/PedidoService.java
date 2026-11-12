@@ -20,6 +20,8 @@ import co.edu.autonoma.mercadolocalapi.domain.EstadoPedido;
 import co.edu.autonoma.mercadolocalapi.dto.request.CambiarEstadoPedidoRequest;
 import co.edu.autonoma.mercadolocalapi.repository.ItemPedidoRepository;
 import co.edu.autonoma.mercadolocalapi.dto.response.PedidoResumenResponse;
+import co.edu.autonoma.mercadolocalapi.dto.response.PedidoProductorResponse;
+import co.edu.autonoma.mercadolocalapi.repository.ProductorRepository;
 
 import java.time.LocalDate;
 import java.util.Comparator;
@@ -34,6 +36,7 @@ public class PedidoService {
     private final OfertaRepository ofertaRepository;
     private final MovimientoStockRepository movimientoRepository;
     private final ItemPedidoRepository itemPedidoRepository;
+    private final ProductorRepository productorRepository;
 
     @Transactional
     public PedidoResponse crear(CrearPedidoRequest request) {
@@ -92,6 +95,17 @@ public class PedidoService {
         } else{
             return repository.findByCompradorIdOrderByCreadoEnDesc(compradorId).stream()
                     .map(PedidoResumenResponse::desde)
+                    .toList();
+        }
+    }
+
+    @Transactional (readOnly = true)
+    public List<PedidoProductorResponse> listarPorProductor(Long productorId){
+        if(!productorRepository.existsById(productorId)){
+            throw new RecursoNoEncontradoException("No existe el productor " + productorId);
+        } else{
+            return repository.buscarConOfertasDelProductor(productorId).stream()
+                    .map(pedido -> PedidoProductorResponse.desde(pedido, productorId))
                     .toList();
         }
     }
