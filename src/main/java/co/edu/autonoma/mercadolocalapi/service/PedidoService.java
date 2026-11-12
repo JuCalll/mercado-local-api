@@ -55,6 +55,16 @@ public class PedidoService {
         return PedidoResponse.desde(guardado);
     }
 
+    @Transactional(readOnly = true)
+    public PedidoResponse buscar(Long id) {
+        return PedidoResponse.desde(obtener(id));
+    }
+
+    private PedidoEntity obtener(Long id) {
+        return repository.findById(id)
+                .orElseThrow(() -> new RecursoNoEncontradoException("No existe el pedido " + id));
+    }
+
     private OfertaEntity bloquearOferta(Long ofertaId) {
         return ofertaRepository.buscarParaActualizar(ofertaId)
                 .orElseThrow(() -> new RecursoNoEncontradoException("No existe la oferta " + ofertaId));

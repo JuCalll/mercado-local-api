@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 
 import java.net.URI;
 
@@ -24,5 +26,10 @@ public class PedidoController {
     public ResponseEntity<PedidoResponse> crear(@Valid @RequestBody CrearPedidoRequest request) {
         PedidoResponse creado = service.crear(request);
         return ResponseEntity.created(URI.create("/api/pedidos/" + creado.id())).body(creado);
+    }
+
+    @GetMapping("/{id}")
+    public PedidoResponse buscar(@PathVariable Long id) {
+        return service.buscar(id);
     }
 }
