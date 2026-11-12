@@ -12,6 +12,10 @@ import lombok.NoArgsConstructor;
 
 import java.time.OffsetDateTime;
 
+@Entity
+@Table(name = "compradores", schema = "personas")
+@Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class CompradorEntity {
 
     @Id
