@@ -134,4 +134,35 @@ class PedidoServiceTest {
         assertThat(tomate.getStock()).isEqualTo(2);
         verify(repository, never()).save(any());
     }
+
+    @Test
+    void retirarItem_existente_devuelveElStockYRegistraElMovimiento() {
+        // Arrange
+        OfertaEntity tomate = ofertaDeTomate(8);
+        PedidoEntity pedido = new PedidoEntity(comprador);
+        pedido.agregarItem(tomate, 2);
+        ItemPedidoEntity item = pedido.getItems().get(0);
+        when(itemPedidoRepository.findById(5L)).thenReturn(Optional.of(item));
+        when(ofertaRepository.buscarParaActualizar(any())).thenReturn(Optional.of(tomate));
+
+        // Act
+        service.retirarItem(5L);
+
+        // Assert
+        assertThat(pedido.getItems()).isEmpty();
+        assertThat(tomate.getStock()).isEqualTo(10);
+        verify(movimientoRepository).save(any(MovimientoStockEntity.class));
+    }
+
+    @Test
+    void retirarItem_inexistente_noRegistraMovimientos() {
+        // Arrange
+        when(itemPedidoRepository.findById(99L)).thenReturn(Optional.empty());
+
+        // Act
+        assertThrows(RecursoNoEncontradoException.class, () -> service.retirarItem(99L));
+
+        // Assert
+        verify(movimientoRepository, never()).save(any());
+    }
 }
