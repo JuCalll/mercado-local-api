@@ -95,4 +95,43 @@ class PedidoServiceTest {
         // Assert
         assertThat(error.getMessage()).isEqualTo("No existe el pedido 99");
     }
+
+    @Test
+    void crear_conStockSuficiente_quedaPendienteYDescuentaElStock() {
+        // Arrange
+        OfertaEntity tomate = ofertaDeTomate(10);
+        when(compradorRepository.findById(1L)).thenReturn(Optional.of(comprador));
+        when(ofertaRepository.buscarParaActualizar(2L)).thenReturn(Optional.of(tomate));
+        when(repository.save(any(PedidoEntity.class)))
+                .thenAnswer(invocacion -> invocacion.getArgument(0));
+        CrearPedidoRequest request = new CrearPedidoRequest(1L,
+                List.of(new ItemPedidoRequest(2L, 3)));
+
+        // Act
+        PedidoResponse respuesta = service.crear(request);
+
+        // Assert
+        assertThat(respuesta.estado()).isEqualTo(EstadoPedido.PENDIENTE);
+        assertThat(respuesta.total()).isEqualByComparingTo("10500");
+        assertThat(tomate.getStock()).isEqualTo(7);
+    }
+
+    @Test
+    void crear_sinStockSuficiente_lanzaReglaNegocioYNoGuarda() {
+        // Arrange
+        OfertaEntity tomate = ofertaDeTomate(2);
+        when(compradorRepository.findById(1L)).thenReturn(Optional.of(comprador));
+        when(ofertaRepository.buscarParaActualizar(2L)).thenReturn(Optional.of(tomate));
+        CrearPedidoRequest request = new CrearPedidoRequest(1L,
+                List.of(new ItemPedidoRequest(2L, 5)));
+
+        // Act
+        ReglaNegocioException error = assertThrows(ReglaNegocioException.class,
+                () -> service.crear(request));
+
+        // Assert
+        assertThat(error.getMessage()).contains("Stock insuficiente");
+        assertThat(tomate.getStock()).isEqualTo(2);
+        verify(repository, never()).save(any());
+    }
 }
