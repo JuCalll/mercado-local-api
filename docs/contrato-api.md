@@ -4,7 +4,7 @@ Catálogo de todas las peticiones del aplicativo, con la estructura exacta de ca
 
 **Fuentes:** enunciado del proyecto (usuarios, reglas RN-01 a RN-06 y contrato HTTP mínimo), modelo de datos `database/01_esquema.sql` y clases de la asignatura (verbos HTTP, códigos de estado, DTO).
 
-**Estado de implementación:** 11 de 20 (E01 a E04 y E06 a E12) · 9 pendientes. Todos los DTO del contrato existen en el paquete `dto` desde la rama `feature/iteracion-get`.
+**Estado de implementación:** 20 de 20. Todos los endpoints del contrato están implementados.
 
 ---
 
@@ -87,7 +87,7 @@ El enunciado exige no exponer el contacto antes de confirmar el pedido. Por eso 
 | E02 | GET | `/api/ofertas` | Lista las ofertas vigentes | **Enunciado** | GET · Hecho |
 | E03 | GET | `/api/ofertas/{id}` | Consulta una oferta | **Docente** | GET · Hecho |
 | E04 | POST | `/api/ofertas` | Publica una oferta | Necesario | POST · Hecho |
-| E05 | PUT | `/api/ofertas/{id}` | Reemplaza una oferta antes de recibir pedidos | **Enunciado** | PUT/PATCH |
+| E05 | PUT | `/api/ofertas/{id}` | Reemplaza una oferta antes de recibir pedidos | **Enunciado** | PUT/PATCH · Hecho|
 | E06 | PATCH | `/api/ofertas/{id}/estado` | Activa o cierra una oferta | **Enunciado** | PUT/PATCH · Hecho |
 | E07 | GET | `/api/ofertas/{id}/movimientos` | Historial de stock de una oferta | Complementario | GET · Hecho |
 | E08 | GET | `/api/productores` | Lista los productores | Complementario | GET · Hecho |
@@ -95,14 +95,14 @@ El enunciado exige no exponer el contacto antes de confirmar el pedido. Por eso 
 | E10 | POST | `/api/productores` | Registra un productor | Necesario | POST · Hecho |
 | E11 | PATCH | `/api/productores/{id}/estado` | Activa o desactiva un productor | Complementario | PUT/PATCH · Hecho |
 | E12 | GET | `/api/productores/{id}/ofertas` | Ofertas de un productor, en cualquier estado | Complementario | GET · Hecho |
-| E13 | GET | `/api/productores/{id}/pedidos` | Vista del productor: pedidos con sus ofertas | **Enunciado** | GET |
-| E14 | POST | `/api/compradores` | Registra un comprador | Necesario | POST |
-| E15 | GET | `/api/compradores/{id}` | Consulta un comprador | Necesario | GET |
-| E16 | GET | `/api/compradores/{id}/pedidos` | Pedidos de un comprador | Necesario | GET |
-| E17 | POST | `/api/pedidos` | Crea un pedido y descuenta stock | **Enunciado** | POST |
-| E18 | GET | `/api/pedidos/{id}` | Consulta un pedido | Necesario | GET |
-| E19 | PATCH | `/api/pedidos/{id}/estado` | Confirma o cancela un pedido | Necesario | PUT/PATCH |
-| E20 | DELETE | `/api/items-pedido/{id}` | Retira un ítem antes de confirmar | **Enunciado** | DELETE |
+| E13 | GET | `/api/productores/{id}/pedidos` | Vista del productor: pedidos con sus ofertas | **Enunciado** | GET · Hecho|
+| E14 | POST | `/api/compradores` | Registra un comprador | Necesario | POST · Hecho|
+| E15 | GET | `/api/compradores/{id}` | Consulta un comprador | Necesario | GET · Hecho|
+| E16 | GET | `/api/compradores/{id}/pedidos` | Pedidos de un comprador | Necesario | GET · Hecho|
+| E17 | POST | `/api/pedidos` | Crea un pedido y descuenta stock | **Enunciado** | POST · Hecho|
+| E18 | GET | `/api/pedidos/{id}` | Consulta un pedido | Necesario | GET · Hecho|
+| E19 | PATCH | `/api/pedidos/{id}/estado` | Confirma o cancela un pedido | Necesario | PUT/PATCH · Hecho|
+| E20 | DELETE | `/api/items-pedido/{id}` | Retira un ítem antes de confirmar | **Enunciado** | DELETE · Hecho|
 
 **Por iteración:**
 
