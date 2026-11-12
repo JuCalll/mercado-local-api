@@ -12,8 +12,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import co.edu.autonoma.mercadolocalapi.dto.request.CambiarEstadoPedidoRequest;
+import org.springframework.web.bind.annotation.PatchMapping;
 
 import java.net.URI;
+import org.springframework.web.bind.annotation.RequestParam;
+
 
 @RestController
 @RequestMapping("/api/pedidos")
@@ -31,5 +35,10 @@ public class PedidoController {
     @GetMapping("/{id}")
     public PedidoResponse buscar(@PathVariable Long id) {
         return service.buscar(id);
+    }
+
+    @PatchMapping("/{id}/estado")
+    public PedidoResponse cambiarEstado(@PathVariable Long id, @Valid @RequestBody CambiarEstadoPedidoRequest request) {
+        return service.cambiarEstado(id, request);
     }
 }

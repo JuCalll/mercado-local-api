@@ -16,6 +16,8 @@ import co.edu.autonoma.mercadolocalapi.repository.PedidoRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import co.edu.autonoma.mercadolocalapi.domain.EstadoPedido;
+import co.edu.autonoma.mercadolocalapi.dto.request.CambiarEstadoPedidoRequest;
 
 import java.time.LocalDate;
 import java.util.Comparator;
@@ -60,9 +62,27 @@ public class PedidoService {
         return PedidoResponse.desde(obtener(id));
     }
 
+    @Transactional
+    public PedidoResponse cambiarEstado(Long id, CambiarEstadoPedidoRequest request){
+        PedidoEntity pedido = obtener(id);
+        if(request.estado() == EstadoPedido.CONFIRMADO){
+            pedido.confirmar();
+        } else{
+            pedido.cancelar();
+            pedido.getItems().forEach(this::devolverStock);
+        }
+        return PedidoResponse.desde(pedido);
+    }
+
     private PedidoEntity obtener(Long id) {
         return repository.findById(id)
                 .orElseThrow(() -> new RecursoNoEncontradoException("No existe el pedido " + id));
+    }
+
+    private void devolverStock(ItemPedidoEntity item){
+        OfertaEntity oferta = bloquearOferta(item.getOferta().getId());
+        oferta.devolver(item.getCantidad());
+        movimientoRepository.save(MovimientoStockEntity.devolucion(oferta, item.getPedido().getId(), item.getCantidad()));
     }
 
     private OfertaEntity bloquearOferta(Long ofertaId) {
