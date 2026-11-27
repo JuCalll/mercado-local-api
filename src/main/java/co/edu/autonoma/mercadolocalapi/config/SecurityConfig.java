@@ -18,7 +18,6 @@ import org.springframework.security.web.SecurityFilterChain;
 @EnableWebSecurity
 public class SecurityConfig {
 
-    // Paso 2: las contraseñas se guardan como hash BCrypt, nunca en texto plano
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
@@ -26,12 +25,10 @@ public class SecurityConfig {
 
     @Bean
     public UserDetailsService usuarios(PasswordEncoder encoder) {
-        // Ana Gómez, compradora: publica, pide y consulta
         UserDetails ana = User.withUsername("ana")
                 .password(encoder.encode("ana123"))
                 .roles("USUARIO")
                 .build();
-        // Administrador del mercado: retira ítems y activa o desactiva productores
         UserDetails admin = User.withUsername("admin")
                 .password(encoder.encode("admin123"))
                 .roles("ADMIN")
@@ -39,17 +36,33 @@ public class SecurityConfig {
         return new InMemoryUserDetailsManager(ana, admin);
     }
 
-    // Paso 3: quién puede hacer qué. Se leen de arriba hacia abajo y gana la primera que coincide
     @Bean
     public SecurityFilterChain filtros(HttpSecurity http) throws Exception {
         http
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/error").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/api/estado", "/api/ofertas/**").permitAll()
-                        .requestMatchers(HttpMethod.DELETE, "/api/items-pedido/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.GET, "/api/estado").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/ofertas").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/ofertas/*").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/ofertas/*/movimientos").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/ofertas").authenticated()
+                        .requestMatchers(HttpMethod.PUT, "/api/ofertas/*").authenticated()
+                        .requestMatchers(HttpMethod.PATCH, "/api/ofertas/*/estado").authenticated()
+                        .requestMatchers(HttpMethod.GET, "/api/productores").authenticated()
+                        .requestMatchers(HttpMethod.GET, "/api/productores/*").authenticated()
+                        .requestMatchers(HttpMethod.POST, "/api/productores").authenticated()
                         .requestMatchers(HttpMethod.PATCH, "/api/productores/*/estado").hasRole("ADMIN")
-                        .anyRequest().authenticated())
+                        .requestMatchers(HttpMethod.GET, "/api/productores/*/ofertas").authenticated()
+                        .requestMatchers(HttpMethod.GET, "/api/productores/*/pedidos").authenticated()
+                        .requestMatchers(HttpMethod.POST, "/api/compradores").authenticated()
+                        .requestMatchers(HttpMethod.GET, "/api/compradores/*").authenticated()
+                        .requestMatchers(HttpMethod.GET, "/api/compradores/*/pedidos").authenticated()
+                        .requestMatchers(HttpMethod.POST, "/api/pedidos").authenticated()
+                        .requestMatchers(HttpMethod.GET, "/api/pedidos/*").authenticated()
+                        .requestMatchers(HttpMethod.PATCH, "/api/pedidos/*/estado").authenticated()
+                        .requestMatchers(HttpMethod.DELETE, "/api/items-pedido/*").hasRole("ADMIN")
+                        .anyRequest().denyAll())
                 .httpBasic(Customizer.withDefaults());
         return http.build();
     }
