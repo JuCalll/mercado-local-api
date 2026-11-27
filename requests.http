@@ -1,55 +1,79 @@
 @base = http://localhost:8080
-@productorId = 1
-@otroProductorId = 2
-# El flujo de pedidos (desde E14) cuenta la historia completa: registrar, pedir, retirar y confirmar.
-@ofertaId = 2
-@ofertaVencidaId = 3
-@ofertaNuevaId = 4
-@compradorId = 1
-@pedidoId = 1
-@itemId = 1
+@vigenteHasta = 2030-12-31
 
-### E01 · Estado del servicio → 200
+@ana = ana ana123
+@admin = admin admin123
+
+@productorId = {{productorFinca.response.body.$.id}}
+@otroProductorId = {{productorRoble.response.body.$.id}}
+@ofertaId = {{ofertaTomate.response.body.$.id}}
+@ofertaNuevaId = {{ofertaAguacate.response.body.$.id}}
+@ofertaCerradaId = {{ofertaMora.response.body.$.id}}
+@compradorId = {{compradorAna.response.body.$.id}}
+@pedidoId = {{pedidoAna.response.body.$.id}}
+@itemAguacateId = {{pedidoAna.response.body.$.items[1].id}}
+
+### E01 · Estado del servicio → 200 (público)
 GET {{base}}/api/estado
 Accept: application/json
 
-### E02 · Ofertas vigentes → 200
-GET {{base}}/api/ofertas
-Accept: application/json
-
-### E03 · Una oferta → 200
-GET {{base}}/api/ofertas/{{ofertaId}}
-Accept: application/json
-
-### E03 · Oferta que no existe → 404 con ErrorResponse
-GET {{base}}/api/ofertas/999
-Accept: application/json
-
-### E03 · El id no es un número → 400
-GET {{base}}/api/ofertas/abc
-Accept: application/json
-
-### E08 · Lista de productores → 200
-GET {{base}}/api/productores
-Accept: application/json
-
-### E09 · Un productor → 200
-GET {{base}}/api/productores/{{productorId}}
-Accept: application/json
-
-### E10 · Registrar un productor → 201 (la segunda vez → 409, correo repetido)
+### Seguridad · Crear sin credenciales → 401
 POST {{base}}/api/productores
 Content-Type: application/json
 
 {
+  "nombre": "Sin credenciales",
+  "correo": "anonimo@correo.com",
+  "telefono": "3000000000",
+  "municipio": "Manizales"
+}
+
+### Seguridad · Contraseña incorrecta → 401
+GET {{base}}/api/productores
+Authorization: Basic ana ana999
+Accept: application/json
+
+### E10 · Registrar el primer productor → 201
+# @name productorFinca
+POST {{base}}/api/productores
+Authorization: Basic {{ana}}
+Content-Type: application/json
+
+{
+  "nombre": "Finca La Esperanza",
+  "correo": "finca-{{$timestamp}}@correo.com",
+  "telefono": "3001234567",
+  "municipio": "Manizales"
+}
+
+### E10 · Registrar el segundo productor → 201
+# @name productorRoble
+POST {{base}}/api/productores
+Authorization: Basic {{ana}}
+Content-Type: application/json
+
+{
   "nombre": "Trapiche El Roble",
-  "correo": "roble@correo.com",
+  "correo": "roble-{{$timestamp}}@correo.com",
   "telefono": "3007654321",
   "municipio": "Chinchiná"
 }
 
+### E10 · Correo repetido → 409
+POST {{base}}/api/productores
+Authorization: Basic {{ana}}
+Content-Type: application/json
+
+{
+  "nombre": "Otra finca",
+  "correo": "{{productorFinca.request.body.$.correo}}",
+  "telefono": "3000000000",
+  "municipio": "Manizales"
+}
+
 ### E10 · Datos inválidos → 400 con detalles
 POST {{base}}/api/productores
+Authorization: Basic {{ana}}
 Content-Type: application/json
 
 {
@@ -59,28 +83,39 @@ Content-Type: application/json
   "municipio": "Manizales"
 }
 
-### E11 · Desactivar un productor → 200
-PATCH {{base}}/api/productores/{{productorId}}/estado
-Content-Type: application/json
-
-{
-  "activo": false
-}
-
-### E11 · Activarlo de nuevo → 200
-PATCH {{base}}/api/productores/{{productorId}}/estado
-Content-Type: application/json
-
-{
-  "activo": true
-}
-
-### E12 · Ofertas de un productor, en cualquier estado → 200
-GET {{base}}/api/productores/{{productorId}}/ofertas
+### E08 · Lista de productores → 200
+GET {{base}}/api/productores
+Authorization: Basic {{ana}}
 Accept: application/json
 
-### E04 · Publicar una oferta del segundo productor → 201 (si está inactivo → 409)
+### E09 · Un productor → 200
+GET {{base}}/api/productores/{{productorId}}
+Authorization: Basic {{ana}}
+Accept: application/json
+
+### E09 · Productor que no existe → 404
+GET {{base}}/api/productores/999999
+Authorization: Basic {{ana}}
+Accept: application/json
+
+### E04 · Publicar el tomate del primer productor → 201
+# @name ofertaTomate
 POST {{base}}/api/ofertas
+Authorization: Basic {{ana}}
+Content-Type: application/json
+
+{
+  "productorId": {{productorId}},
+  "producto": "Tomate chonto",
+  "precioUnitario": 3500.00,
+  "stock": 20,
+  "vigenteHasta": "{{vigenteHasta}}"
+}
+
+### E04 · Publicar el aguacate del segundo productor → 201
+# @name ofertaAguacate
+POST {{base}}/api/ofertas
+Authorization: Basic {{ana}}
 Content-Type: application/json
 
 {
@@ -88,11 +123,26 @@ Content-Type: application/json
   "producto": "Aguacate hass",
   "precioUnitario": 2500.00,
   "stock": 30,
-  "vigenteHasta": "2026-12-31"
+  "vigenteHasta": "{{vigenteHasta}}"
+}
+
+### E04 · Publicar la mora del primer productor → 201 (se cerrará para probar RN-04)
+# @name ofertaMora
+POST {{base}}/api/ofertas
+Authorization: Basic {{ana}}
+Content-Type: application/json
+
+{
+  "productorId": {{productorId}},
+  "producto": "Mora de Castilla",
+  "precioUnitario": 8000.00,
+  "stock": 10,
+  "vigenteHasta": "{{vigenteHasta}}"
 }
 
 ### E04 · Precio negativo y fecha pasada → 400 con detalles
 POST {{base}}/api/ofertas
+Authorization: Basic {{ana}}
 Content-Type: application/json
 
 {
@@ -105,64 +155,144 @@ Content-Type: application/json
 
 ### E04 · Productor que no existe → 404
 POST {{base}}/api/ofertas
+Authorization: Basic {{ana}}
 Content-Type: application/json
 
 {
-  "productorId": 999,
+  "productorId": 999999,
   "producto": "Aguacate hass",
   "precioUnitario": 2500.00,
   "stock": 30,
-  "vigenteHasta": "2026-12-31"
+  "vigenteHasta": "{{vigenteHasta}}"
 }
 
-### E07 · Historial de stock de una oferta → 200
+### E11 · Desactivar un productor siendo USUARIO → 403
+PATCH {{base}}/api/productores/{{productorId}}/estado
+Authorization: Basic {{ana}}
+Content-Type: application/json
+
+{
+  "activo": false
+}
+
+### E11 · Desactivar el primer productor siendo ADMIN → 200
+PATCH {{base}}/api/productores/{{productorId}}/estado
+Authorization: Basic {{admin}}
+Content-Type: application/json
+
+{
+  "activo": false
+}
+
+### E04 · Publicar con un productor inactivo → 409
+POST {{base}}/api/ofertas
+Authorization: Basic {{ana}}
+Content-Type: application/json
+
+{
+  "productorId": {{productorId}},
+  "producto": "Lulo",
+  "precioUnitario": 4000.00,
+  "stock": 15,
+  "vigenteHasta": "{{vigenteHasta}}"
+}
+
+### E11 · Activarlo de nuevo siendo ADMIN → 200
+PATCH {{base}}/api/productores/{{productorId}}/estado
+Authorization: Basic {{admin}}
+Content-Type: application/json
+
+{
+  "activo": true
+}
+
+### E02 · Ofertas vigentes → 200 (público)
+GET {{base}}/api/ofertas
+Accept: application/json
+
+### E03 · Una oferta → 200 (público)
+GET {{base}}/api/ofertas/{{ofertaId}}
+Accept: application/json
+
+### E03 · Oferta que no existe → 404 con ErrorResponse
+GET {{base}}/api/ofertas/999999
+Accept: application/json
+
+### E03 · El id no es un número → 400
+GET {{base}}/api/ofertas/abc
+Accept: application/json
+
+### E07 · Historial de stock del tomate → 200 (público, solo PUBLICACION)
 GET {{base}}/api/ofertas/{{ofertaId}}/movimientos
 Accept: application/json
 
-### E06 · Cerrar una oferta → 200
+### E06 · Cerrar el tomate → 200
 PATCH {{base}}/api/ofertas/{{ofertaId}}/estado
+Authorization: Basic {{ana}}
 Content-Type: application/json
 
 {
   "estado": "CERRADA"
 }
 
-### E06 · Activarla de nuevo → 200
+### E06 · Activarlo de nuevo → 200
 PATCH {{base}}/api/ofertas/{{ofertaId}}/estado
+Authorization: Basic {{ana}}
 Content-Type: application/json
 
 {
   "estado": "ACTIVA"
 }
 
-### E06 · Activar una oferta vencida → 409
-PATCH {{base}}/api/ofertas/{{ofertaVencidaId}}/estado
+### E06 · Cerrar la mora → 200 (queda cerrada para el pedido que debe fallar)
+PATCH {{base}}/api/ofertas/{{ofertaCerradaId}}/estado
+Authorization: Basic {{ana}}
 Content-Type: application/json
 
 {
-  "estado": "ACTIVA"
+  "estado": "CERRADA"
 }
 
 ### E06 · Estado que no existe → 400
 PATCH {{base}}/api/ofertas/{{ofertaId}}/estado
+Authorization: Basic {{ana}}
 Content-Type: application/json
 
 {
   "estado": "activa"
 }
 
-### E14 · Registrar un comprador → 201 (la segunda vez → 409, correo repetido)
+### E12 · Ofertas del primer productor, en cualquier estado → 200
+GET {{base}}/api/productores/{{productorId}}/ofertas
+Authorization: Basic {{ana}}
+Accept: application/json
+
+### E14 · Registrar un comprador → 201
+# @name compradorAna
 POST {{base}}/api/compradores
+Authorization: Basic {{ana}}
 Content-Type: application/json
 
 {
   "nombre": "Ana Gómez",
-  "correo": "ana@correo.com",
+  "correo": "ana-{{$timestamp}}@correo.com",
+  "telefono": "3110000000"
+}
+
+### E14 · Correo repetido → 409
+POST {{base}}/api/compradores
+Authorization: Basic {{ana}}
+Content-Type: application/json
+
+{
+  "nombre": "Ana Gómez",
+  "correo": "{{compradorAna.request.body.$.correo}}",
   "telefono": "3110000000"
 }
 
 ### E14 · Correo inválido → 400
 POST {{base}}/api/compradores
+Authorization: Basic {{ana}}
 Content-Type: application/json
 
 {
@@ -173,10 +303,13 @@ Content-Type: application/json
 
 ### E15 · Un comprador → 200
 GET {{base}}/api/compradores/{{compradorId}}
+Authorization: Basic {{ana}}
 Accept: application/json
 
 ### E17 · Crear un pedido con ofertas de dos productores → 201
+# @name pedidoAna
 POST {{base}}/api/pedidos
+Authorization: Basic {{ana}}
 Content-Type: application/json
 
 {
@@ -189,6 +322,7 @@ Content-Type: application/json
 
 ### E17 · Pedir más que el stock → 409 (RN-02)
 POST {{base}}/api/pedidos
+Authorization: Basic {{ana}}
 Content-Type: application/json
 
 {
@@ -198,19 +332,34 @@ Content-Type: application/json
   ]
 }
 
-### E17 · Pedir una oferta vencida → 409 (RN-04)
+### E17 · Pedir una oferta cerrada → 409 (RN-04)
 POST {{base}}/api/pedidos
+Authorization: Basic {{ana}}
 Content-Type: application/json
 
 {
   "compradorId": {{compradorId}},
   "items": [
-    { "ofertaId": {{ofertaVencidaId}}, "cantidad": 1 }
+    { "ofertaId": {{ofertaCerradaId}}, "cantidad": 1 }
+  ]
+}
+
+### E17 · Oferta repetida en el mismo pedido → 400
+POST {{base}}/api/pedidos
+Authorization: Basic {{ana}}
+Content-Type: application/json
+
+{
+  "compradorId": {{compradorId}},
+  "items": [
+    { "ofertaId": {{ofertaId}}, "cantidad": 1 },
+    { "ofertaId": {{ofertaId}}, "cantidad": 2 }
   ]
 }
 
 ### E17 · Pedido sin ítems → 400 con detalles
 POST {{base}}/api/pedidos
+Authorization: Basic {{ana}}
 Content-Type: application/json
 
 {
@@ -220,13 +369,27 @@ Content-Type: application/json
 
 ### E18 · Consultar el pedido → 200 (contacto en null mientras está PENDIENTE)
 GET {{base}}/api/pedidos/{{pedidoId}}
+Authorization: Basic {{ana}}
 Accept: application/json
 
-### E20 · Retirar el ítem del aguacate antes de confirmar → 204
-DELETE {{base}}/api/items-pedido/{{itemId}}
+### E20 · Retirar un ítem sin credenciales → 401
+DELETE {{base}}/api/items-pedido/{{itemAguacateId}}
+
+### E20 · Retirar un ítem siendo USUARIO → 403
+DELETE {{base}}/api/items-pedido/{{itemAguacateId}}
+Authorization: Basic {{ana}}
+
+### E20 · Retirar el ítem del aguacate siendo ADMIN → 204
+DELETE {{base}}/api/items-pedido/{{itemAguacateId}}
+Authorization: Basic {{admin}}
+
+### E20 · Ítem que no existe → 404
+DELETE {{base}}/api/items-pedido/999999
+Authorization: Basic {{admin}}
 
 ### E19 · Confirmar el pedido → 200 (ahora sí aparece el contacto)
 PATCH {{base}}/api/pedidos/{{pedidoId}}/estado
+Authorization: Basic {{ana}}
 Content-Type: application/json
 
 {
@@ -235,6 +398,7 @@ Content-Type: application/json
 
 ### E19 · Confirmarlo otra vez → 409 (ya no está PENDIENTE)
 PATCH {{base}}/api/pedidos/{{pedidoId}}/estado
+Authorization: Basic {{ana}}
 Content-Type: application/json
 
 {
@@ -243,42 +407,47 @@ Content-Type: application/json
 
 ### E19 · Volver a PENDIENTE → 400
 PATCH {{base}}/api/pedidos/{{pedidoId}}/estado
+Authorization: Basic {{ana}}
 Content-Type: application/json
 
 {
   "estado": "PENDIENTE"
 }
 
-### E13 · Vista del productor: solo sus ítems → 200
+### E13 · Vista del primer productor: solo su tomate y el contacto del comprador → 200
 GET {{base}}/api/productores/{{productorId}}/pedidos
+Authorization: Basic {{ana}}
 Accept: application/json
 
 ### E16 · Pedidos del comprador → 200
 GET {{base}}/api/compradores/{{compradorId}}/pedidos
+Authorization: Basic {{ana}}
 Accept: application/json
 
-### E07 · El historial ahora muestra DESCUENTO y DEVOLUCION → 200
-GET {{base}}/api/ofertas/{{ofertaId}}/movimientos
+### E07 · Historial del aguacate: PUBLICACION, DESCUENTO y DEVOLUCION → 200 (público)
+GET {{base}}/api/ofertas/{{ofertaNuevaId}}/movimientos
 Accept: application/json
 
-### E05 · Reemplazar una oferta que ya recibió pedidos → 409
+### E05 · Reemplazar el tomate, que ya recibió pedidos → 409
 PUT {{base}}/api/ofertas/{{ofertaId}}
+Authorization: Basic {{ana}}
 Content-Type: application/json
 
 {
   "producto": "Tomate chonto de primera",
   "precioUnitario": 3800.00,
   "stock": 35,
-  "vigenteHasta": "2026-12-31"
+  "vigenteHasta": "{{vigenteHasta}}"
 }
 
-### E05 · Reemplazar el aguacate → 200 (su único ítem se retiró en E20)
+### E05 · Reemplazar el aguacate → 200 (su único ítem se retiró en E20; registra un AJUSTE)
 PUT {{base}}/api/ofertas/{{ofertaNuevaId}}
+Authorization: Basic {{ana}}
 Content-Type: application/json
 
 {
   "producto": "Aguacate hass de exportación",
   "precioUnitario": 2800.00,
   "stock": 25,
-  "vigenteHasta": "2026-12-31"
+  "vigenteHasta": "{{vigenteHasta}}"
 }
